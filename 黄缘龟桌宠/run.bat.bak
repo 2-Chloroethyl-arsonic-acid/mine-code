@@ -1,0 +1,13 @@
+@echo off
+setlocal DisableDelayedExpansion
+title Turtle Pet
+
+set "PY=E:\Program Files\QClaw\v0.2.37.630\resources\python\python.exe"
+
+if not exist "%PY%" (
+    echo [ERROR] Python not found!
+    pause
+    exit /b 1
+)
+
+"%PY%" "%~dp0黄缘龟桌宠.py"
