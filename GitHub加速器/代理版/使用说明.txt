@@ -1,0 +1,41 @@
+========================================
+ GitHub 加速器 · 代理版  —  使用说明
+========================================
+
+【原理（照搬 Steam++ 的机制，但更轻量）】
+1) hosts 把 GitHub 相关域名指向 127.0.0.1
+2) GitHubProxy.exe 在 127.0.0.1:443 监听，从 TLS 握手包中读取域名（SNI）
+3) 为该域名实时挑选「当前可用」的 IP（阿里 DoH 现查 + 内置池 + 后台定时巡检）
+4) 只做原始 TCP 转发 —— 不破解、不中间人、不安装任何证书
+优点：不像写死 IP 那样会随封锁失效；每条连接都会自动换到可用 IP。
+
+【使用方法】
+1. 右键「启动加速.bat」→ 以管理员身份运行（脚本会自己申请提权）
+   - 它会先写入 hosts，然后启动代理，窗口保持打开（日志实时显示）
+2. 打开 https://github.com 验证；git clone / releases 下载 / raw 文件都可用
+3. 想停止：运行「停止并还原.bat」→ 还原 hosts + 刷新 DNS
+
+【⚠️ 注意事项】
+- 加速期间请勿关闭代理窗口；关闭即等于停止代理
+  （此时 hosts 仍指向 127.0.0.1，GitHub 会打不开 —— 记得跑一次「停止并还原.bat」）
+- 使用前请先退出 Steam++（它也占用 443 端口并管理 hosts，会冲突）
+- 需要管理员权限（改 hosts + 绑定 443 端口）
+
+【覆盖的域名】
+github.com / api.github.com / raw.githubusercontent.com /
+objects.githubusercontent.com / gist.githubusercontent.com /
+codeload.github.com / avatars.githubusercontent.com /
+camo / media / user-images / private-user-images.githubusercontent.com /
+github.githubassets.com / collector / central / alive / live.github.com
+
+【文件说明】
+- GitHubProxy.exe      主程序（也可命令行用：--install-hosts / --restore-hosts / --selftest）
+- 启动加速.bat         一键启动（自动提权）
+- 停止并还原.bat       一键停止并还原 hosts
+- 源码_gh_proxy.py     源码（仅 Python 标准库，可审计）
+
+【常见问题】
+Q: 加速后某个域名仍超时？
+A: 看代理窗口日志。后台巡检每 90 秒刷新一次可用 IP 列表，稍等再试即可。
+Q: 想开机自动运行？
+A: 可以做成 Windows 计划任务（需要的话告诉我，我帮你配）。

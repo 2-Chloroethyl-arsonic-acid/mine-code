@@ -1,0 +1,45 @@
+========================================
+ GitHub 加速器 v1.1  —  使用说明
+========================================
+
+【这是什么】
+一个只做「GitHub 加速」的绿色小工具（单文件 exe，无需安装、无后台常驻）。
+原理：在你的网络环境下，GitHub 相关域名只是 DNS 被污染；
+      本工具会逐个域名测速，挑出最快可用 IP 写入系统 hosts，
+      让浏览器 / git / 下载器直接走真实服务器（不经第三方代理，不装证书）。
+
+【怎么用】
+1. 右键 GitHub加速器.exe → “以管理员身份运行”（改 hosts 需要管理员权限）
+2. 点「🚀 一键加速」→ 自动测速并写入（约 1 分钟）
+3. 打开 https://github.com 验证；git clone / releases 下载均可正常使用
+4. 想还原：点「⏹ 停止并还原」→ 移除加速条目、恢复被停用的屏蔽条目、刷新 DNS
+
+【⚠️ 重要：与 Steam++ 冲突】
+Steam++（Watt Toolkit）会实时管理 hosts 文件：
+  - 它把 GitHub 域名指向 127.0.0.1，靠自己的本地代理转发
+  - 本工具写入的条目会被它定时覆盖；它写的屏蔽条目也会挡住直连
+所以：使用本工具前请先「退出 Steam++」（托盘右键退出），否则加速不生效。
+本工具会自动把指向 127.0.0.1 的屏蔽条目临时停用（停止时自动还原），
+但无法阻止 Steam++ 运行时覆盖 hosts。
+
+【文件与日志】
+- hosts 备份：%TEMP%\hosts.github-acc.bak（首次加速前自动备份）
+- 运行日志：%TEMP%\github-acc.log
+- 写入位置：C:\Windows\System32\drivers\etc\hosts（带 >>> GitHub加速器 <<< 标记）
+
+【覆盖的域名】
+github.com / api.github.com / raw.githubusercontent.com /
+objects.githubusercontent.com / gist.githubusercontent.com /
+codeload.github.com / avatars.githubusercontent.com /
+github.githubassets.com / camo / media / user-images /
+private-user-images.githubusercontent.com
+
+【常见问题】
+Q: 加速后某个域名仍打不开？
+A: 点「📶 仅测速」看该域名是否有可用 IP；可能是网络环境变化，稍后重试即可。
+Q: 会影响其它网站吗？
+A: 不会。只写入上述 GitHub 域名，其它条目不受影响（动过的条目全部带标记，停止时原样恢复）。
+Q: 需要开机自启吗？
+A: 不需要。hosts 写入后长期有效，除非你手动还原或 IP 失效。
+
+（源码见同目录 源码_gh_accelerator.py，仅依赖 Python 标准库）
